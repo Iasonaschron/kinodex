@@ -6,7 +6,7 @@ A personal movie recommender and list-sharing platform built with **React, Node.
 ## 📸 Screenshots  
 *(Add 2–3 images here — GitHub renders them inline if you use Markdown. Place them in a `/screenshots` folder in your repo or link externally.)*  
 
-- ![Home Page](screenshots/home.png)  
+- ![Home Page](screenshots/search.png)  
 - ![List View](screenshots/list.png)  
 - ![Login/Register](screenshots/login.png)  
 
