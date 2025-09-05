@@ -1,0 +1,35 @@
+### Test creating lists
+
+POST http://localhost:3001/api/lists/jason
+Content-Type: application/json
+
+{
+  "title": "bro what",
+  "description": "huh"
+}
+
+### Adding a movie_id to a list
+
+POST http://localhost:3001/api/lists/jason/favourites/items
+Content-Type: application/json 
+
+{
+  "movie_id": "test2"
+}
+
+### view movies in list
+
+GET http://localhost:3001/api/lists/jason/okay/items
+
+### get lists by user
+
+GET http://localhost:3001/api/lists/jason
+
+
+### delete movie from list
+
+DELETE http://localhost:3001/api/lists/jason/favourites/items/m4
+
+### delete list
+DELETE http://localhost:3001/api/lists/jason/favourites
+

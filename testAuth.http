@@ -1,0 +1,35 @@
+### testing /api/me
+@name login
+
+GET http://localhost:3001/api/me
+
+### testing resgistering a user 
+
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "jasonTest",
+  "email": "jason@example.com",
+  "password": "pass123"
+}
+
+### Login (returns accessToken and sets refreshToken cookie)
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "jasonTest",
+  "password": "pass123"
+}
+
+### test /api/me endpoint which is protected and requires authorization token
+
+GET http://localhost:3001/api/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imphc29uVGVzdCIsInRva2VuX3ZlcnNpb24iOjAsImlhdCI6MTc1NjEzMjExNiwiZXhwIjoxNzU2MTMzMDE2fQ.ROPoLKZbZKJcIk-iUa_WtoWzTk7euhAnaxW2lUway5M
+
+### Refresh token (must send cookies)
+POST http://localhost:3001/api/auth/refresh
+
+### Logout (clears refresh cookie and invalidates tokens)
+POST http://localhost:3001/api/auth/logout
