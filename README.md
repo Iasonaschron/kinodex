@@ -104,7 +104,6 @@ REACT_APP_API_BASE=http://localhost:3001
 ---
 
 ## 🗄️ Database Setup  
-If you want others to replicate your DB schema:  
 
 ```bash
 createdb kinodex
