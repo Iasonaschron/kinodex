@@ -109,15 +109,4 @@ REACT_APP_API_BASE=http://localhost:3001
 createdb kinodex
 psql -d kinodex -f server/db/schema.sql
 ```
-
-*(Make sure to include `server/db/schema.sql` in your repo for others.)*  
-
 ---
-
-## 🤝 Contributing  
-Pull requests are welcome. For major changes, please open an issue first to discuss what you’d like to change.  
-
----
-
-## 📜 License  
-This project is licensed under the MIT License.  
