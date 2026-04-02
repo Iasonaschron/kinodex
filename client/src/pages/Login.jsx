@@ -23,7 +23,7 @@ export default function Login() {
     setLoading(true);
     try {
       await login(username, email, password);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (e) {
       setError(e.message || "Login failed.");
     } finally {

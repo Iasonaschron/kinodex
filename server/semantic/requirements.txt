@@ -1,0 +1,7 @@
+flask>=3.0
+sentence-transformers>=3.0
+numpy>=1.26
+requests>=2.31
+# sentence-transformers pulls in torch automatically; pin a CPU-only build
+# if you don't have a GPU to keep the install lean:
+# torch==2.3.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu

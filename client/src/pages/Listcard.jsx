@@ -3,63 +3,44 @@ import '../styles.css';
 
 const API_KEY = "295a9366";
 
-const Listcard = ({title, previewIds, onCardClick, isEditing, deleteList}) => {
+const Listcard = ({ title, previewIds, onCardClick, isActive }) => {
 
-    const [posters, setPosters] = useState(Array(4));
-    
+    const [posters, setPosters] = useState([]);
+
     useEffect(() => {
-
         const loadPosters = async () => {
-
-            console.log("Preview ids " + previewIds);
-
-            const tempPosters = await Promise.all (
-
-            previewIds.map(async (movieId) => {
-
-                try {
-                    const url = `https://www.omdbapi.com/?apikey=${API_KEY}&i=${movieId}`
-                    const res = await fetch(url);
-                    const data = await res.json();
-
-                    return data.Poster;
-                } catch (err) {
-                    return "/nomovie.jpg"
-                }
-            }))
-
-        
-        setPosters(tempPosters);
-        }
-
+            const results = await Promise.all(
+                previewIds.map(async (movieId) => {
+                    try {
+                        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${movieId}`);
+                        const data = await res.json();
+                        return data.Poster && data.Poster !== "N/A" ? data.Poster : null;
+                    } catch {
+                        return null;
+                    }
+                })
+            );
+            setPosters(results);
+        };
         loadPosters();
-
     }, [previewIds]);
 
-
     return (
-    <div className={`listcard-wrapper${isEditing ? ' editing' : ''}`}>
-    
-    {isEditing && (
-        <>
-            <button id="delete-button" onClick={deleteList}>×</button>
-        </>
-    )} 
-    <section className="listcard" style={{transform: isEditing ? `translateY(${30}px)` : "translateY(0)",
-          transition: "transform 250ms cubic-bezier(.4,.2,.2,1)"
-        }}>
-    <div>
-    <button id="{title}" className="list" onClick={onCardClick}>
-        {posters.map((poster, index) => (   
-            <img key={index} src={poster} alt={'/nomovie.jpg'}/>
-        ))}
-    </button>
-    <p>{title}</p>
-    </div>
-    </section>
-    
-    </div>    
-    
+        <div className={`listcard-wrapper${isActive ? " is-active" : ""}`}>
+            <section
+                className="listcard"
+                style={{ borderColor: isActive ? "var(--accent-border)" : undefined }}
+            >
+                <button className="list" onClick={onCardClick}>
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        posters[i]
+                            ? <img key={i} src={posters[i]} alt="" />
+                            : <div key={i} className="listcard-empty-slot" />
+                    ))}
+                </button>
+                <p>{title}</p>
+            </section>
+        </div>
     );
 };
 

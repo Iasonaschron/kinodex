@@ -1,90 +1,113 @@
-# KinoDex 🎬  
-A personal movie recommender and list-sharing platform built with **React, Node.js, Express, PostgreSQL, and JWT authentication**.  
+# Kinodex
+
+A full-stack movie tracking and recommendation platform with two AI-powered features: **collaborative filtering** for personalised recommendations and **semantic/natural-language search** powered by a sentence-transformer model.
+
+Built with **React · Node.js · Express · PostgreSQL · Python (sentence-transformers)**.
 
 ---
 
-## 📸 Screenshots  
+## Screenshots
 
-- ![Home Page](screenshots/search.png)  
-- ![List View](screenshots/list.png)  
-- ![Login/Register](screenshots/login.png)  
+**Home — personalised recommendations**
+![Home](screenshots/home.png)
 
----
+**List view — curate and manage your lists**
+![List view](screenshots/list.png)
 
-## 🚀 Features  
-- **User Authentication**: Secure login & signup with JWT.  
-- **Personalized Lists**: Create, edit, and delete custom movie/series lists.  
-- **Movie Search**: Search movies via OMDb API and add them to your lists.  
-- **List Management**: View, update, and organize saved items easily.  
-- **Responsive Frontend**: Built with React and CSS.  
+**Vibe Search — describe a mood, get results**
+![Vibe Search](screenshots/vibe-search.png)
 
----
-
-## 🛠️ Tech Stack  
-**Frontend:**  
-- React  
-- React Router  
-- CSS  
-
-**Backend:**  
-- Node.js  
-- Express.js  
-- PostgreSQL (via `pg`)  
-- JWT (JSON Web Tokens) for authentication  
-
-**APIs & Tools:**  
-- OMDb API for movie data  
-- pgAdmin (for DB management)  
+**Login**
+![Login](screenshots/login.png)
 
 ---
 
-## 📌 Roadmap (In Progress)  
-- ✅ Basic user authentication and list creation  
-- 🚧 Add friends & view their lists  
-- 🚧 Share lists with friends  
-- 🚧 Media sharing and comments  
-- 🚧 Voting on lists (👍 / 👎)  
-- 🚧 Premium features (e.g., favorite actors)  
+## Features
+
+### AI Personalised Recommendations (MinHash + LSH)
+Every user's saved-movie set is hashed into a MinHash signature. LSH banding efficiently clusters users by taste similarity, and unseen movies from similar users are surfaced as **"For You"** recommendations — no external recommendation API, built from scratch.
+
+### AI Semantic / Vibe Search
+A Python microservice embeds the full MovieLens dataset (~9,000 movies) using a pre-trained transformer model (`all-MiniLM-L6-v2` via `sentence-transformers`). At query time the search phrase is embedded into the same vector space and matched against the movie corpus via cosine similarity — so you can search *"psychological thriller with an unreliable narrator"* or *"animated movie that makes adults cry"* instead of a title. The ✦ toggle in the search bar switches between keyword and AI search modes.
+
+### Movie Lists
+Create named lists with descriptions, add movies via inline search, edit or delete entries in a dedicated edit mode, and browse poster thumbnail previews across the app.
+
+### Auth
+JWT-based authentication with protected API routes. Passwords hashed with bcrypt.
 
 ---
 
-## ⚡ Getting Started  
+## Tech Stack
 
-### Requirements  
-- Node.js (>= 18)  
-- PostgreSQL (>= 14) running locally  
-- OMDb API key  
+| Layer | Stack |
+|---|---|
+| Frontend | React, React Router, CSS (custom design system) |
+| Backend | Node.js, Express |
+| Database | PostgreSQL |
+| Auth | JWT + bcrypt |
+| AI Recommendations | MinHash + LSH collaborative filtering (implemented from scratch) |
+| AI Semantic Search | Python, Flask, sentence-transformers (transformer embeddings + cosine similarity) |
+| Movie Data | OMDb API |
 
-### 1. Clone the repo  
+---
+
+## Getting Started
+
+### Requirements
+- Node.js >= 18
+- PostgreSQL >= 14
+- Python >= 3.9 (for vibe search only)
+
+### 1. Clone
 ```bash
 git clone https://github.com/Iasonaschron/kinodex.git
 cd kinodex
 ```
 
-### 2. Backend (Server)  
+### 2. Database
+```bash
+createdb kinodex
+psql -d kinodex -f server/db/schema.sql
+```
+
+### 3. Backend
 ```bash
 cd server
-cp .env.example .env   # fill in your DB and secret values
+cp .env.example .env   # fill in DB credentials and JWT secret
 npm install
-# create database manually (or via schema.sql if provided)
-npm start
+npm start              # runs on port 3001
 ```
 
-### 3. Frontend (Client)  
+### 4. Frontend
 ```bash
 cd client
-cp .env.example .env   # add OMDb API key
 npm install
-npm start
+npm start              # runs on port 3000
 ```
 
-The client runs on `http://localhost:3000` and the backend on `http://localhost:3001`.  
+### 5. Seed recommendation data (optional)
+```bash
+cd server
+node seed_fake_users.js
+```
+Inserts 5 seed users with varied overlapping lists so the MinHash algorithm has signal to work with.
+
+### 6. Vibe Search (optional)
+```bash
+cd server/semantic
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python service.py
+```
+First run downloads the MovieLens dataset and builds embeddings (~1–2 min). Results are cached so subsequent starts take ~2 seconds.
 
 ---
 
-## 🔒 Environment Variables  
+## Environment Variables
 
-**server/.env.example**  
+**`server/.env`**
 ```env
 PGHOST=localhost
 PGPORT=5432
@@ -93,20 +116,10 @@ PGUSER=postgres
 PGPASSWORD=yourpassword
 JWT_SECRET=changeme
 PORT=3001
+SEMANTIC_SERVICE_URL=http://localhost:5001
 ```
 
-**client/.env.example**  
+**`client/.env`**
 ```env
-REACT_APP_OMDB_API_KEY=your_key_here
 REACT_APP_API_BASE=http://localhost:3001
 ```
-
----
-
-## 🗄️ Database Setup  
-
-```bash
-createdb kinodex
-psql -d kinodex -f server/db/schema.sql
-```
----

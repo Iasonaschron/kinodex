@@ -40,7 +40,7 @@ export default function Signup() {
         password: form.password
       });
       await login(form.username, form.email, form.password);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (e) {
       setError(e.message || "Sign up failed.");
     } finally {

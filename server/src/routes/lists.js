@@ -136,22 +136,22 @@ router.get("/:owner/:list/description", async (req, res, next) => {
 })
 
 //update list description
-router.post("/owner/:list/description", async (req, res, next) => {
+router.patch("/:owner/:list/description", async (req, res, next) => {
     try {
         const { owner, list } = req.params;
         const { description } = req.body;
 
         if (!owner || !list) {
-            res.status(400).json({error: "Bad request!"});
+            return res.status(400).json({ error: "Bad request!" });
         }
 
         const updated = await updateList(list, owner, description);
 
         if (!updated) {
-            res.status(404).json({error: "List not found!"});
+            return res.status(404).json({ error: "List not found!" });
         }
 
-        res.status(201).json(updated);
+        res.status(200).json(updated);
     } catch (e) {
         next(e);
     }
