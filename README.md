@@ -54,46 +54,68 @@ JWT-based authentication with protected API routes. Passwords hashed with bcrypt
 
 ## Getting Started
 
-### Requirements
+### With Docker (recommended)
+
+The entire stack — Postgres, Node API, Python semantic service, and React frontend — runs with one command. No local installs needed beyond Docker itself.
+
+```bash
+git clone https://github.com/Iasonaschron/kinodex.git
+cd kinodex
+docker compose up --build
+```
+
+Then open **http://localhost:3000**.
+
+> **First boot takes a few minutes.** The semantic service downloads the MovieLens dataset and builds embeddings on startup. Subsequent starts load from cache and are fast. The database comes pre-seeded with data so recommendations work immediately.
+
+---
+
+### Manual setup (without Docker)
+
+#### Requirements
 - Node.js >= 18
 - PostgreSQL >= 14
 - Python >= 3.9 (for vibe search only)
 
-### 1. Clone
+#### 1. Clone
 ```bash
 git clone https://github.com/Iasonaschron/kinodex.git
 cd kinodex
 ```
 
-### 2. Database
+#### 2. Database
 ```bash
 createdb kinodex
 psql -d kinodex -f server/db/schema.sql
 ```
 
-### 3. Backend
+#### 3. Backend
 ```bash
 cd server
-cp .env.example .env   # fill in DB credentials and JWT secret
 npm install
 npm start              # runs on port 3001
 ```
 
-### 4. Frontend
+Set these in `server/.env`:
+```env
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=kinodex
+PGUSER=postgres
+PGPASSWORD=yourpassword
+JWT_SECRET=changeme
+PORT=3001
+SEMANTIC_SERVICE_URL=http://localhost:5001
+```
+
+#### 4. Frontend
 ```bash
 cd client
 npm install
 npm start              # runs on port 3000
 ```
 
-### 5. Seed recommendation data (optional)
-```bash
-cd server
-node seed_fake_users.js
-```
-Inserts 5 seed users with varied overlapping lists so the MinHash algorithm has signal to work with.
-
-### 6. Vibe Search (optional)
+#### 5. Vibe Search (optional)
 ```bash
 cd server/semantic
 python -m venv .venv

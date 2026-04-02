@@ -1,0 +1,54 @@
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kinodex
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kinodex_pass
+    volumes:
+      - ./server/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kinodex"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Node API ───────────────────────────────────────────────────
+  server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: kinodex
+      PGUSER: postgres
+      PGPASSWORD: kinodex_pass
+      JWT_SECRET: kinodex_jwt_secret
+      PORT: 3001
+      SEMANTIC_SERVICE_URL: http://semantic:5001
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ── Python semantic search ─────────────────────────────────────
+  semantic:
+    build: ./server/semantic
+    volumes:
+      - semantic_cache:/app/data   # cache embeddings across restarts
+    # internal only — server talks to it via Docker network
+
+  # ── React frontend (nginx) ─────────────────────────────────────
+  client:
+    build: ./client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:
+  semantic_cache:
